@@ -10,7 +10,7 @@ namespace CSVNamePicker
     public class Program
     {
 
-        private static void ProcessLine(string date, string line)
+        public static bool ProcessLine(string date, string line)
         {
             // Store date and names read from current line
             string[] array;
@@ -29,12 +29,21 @@ namespace CSVNamePicker
             {
                 // If dates match, print the names
                 System.Console.WriteLine(array[1]);
+
+                // Return true to allow calculating number of matching rows
+                return true;
+            }
+            else
+            {
+                // Return false because there was no match, no change in number of matching rows
+                return false;
             }
 
         }
 
-        private static void ProcessFile(string date, System.IO.StreamReader file)
+        public static int ProcessFile(string date, System.IO.StreamReader file)
         {
+            int numMatches = 0;     // Store the number of matches
             string line;            // Store current line read from the file
             int rowNumber = 1;     // Current line number used to indicate which row has been read
 
@@ -48,14 +57,18 @@ namespace CSVNamePicker
                     line = file.ReadLine().Trim();
 
                     // Process the read line
-                    ProcessLine(date, line);
+                    if(ProcessLine(date, line)==true)
+                    {
+                        // If line had a matching date, increment number of matches
+                        numMatches++;
+                    }
 
                     // Update number of the the current row
                     rowNumber++;
                 }
 
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
                 //e.Message("Line number " + rowNumber + " doesn't contain separator character \";\";, aborting");
                 //e.Data.Values
@@ -67,13 +80,15 @@ namespace CSVNamePicker
                 throw e;
             }
 
+            // Return number of matched rows
+            return numMatches;
         }
 
         // Main program takes up to two arguments.
         // First argument is required and is a date
         // Second argument is optional and specifies the CSV file to read
         // If CSV file is not specified, program uses nimet.csv residing in current directory
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             string date;                // Store the date to search for
             string filename = "nimet.csv";  // Store the default file name
