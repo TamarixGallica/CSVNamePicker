@@ -15,33 +15,42 @@ namespace CSVNamePicker
             string line;            // Store current line read from the file
             int rowNumber = 1;     // Current line number used to indicate which row has been read
 
-            // Loop until we're at the end of the file
-            while (file.Peek() > 0)
+            try
             {
-                // Store date and names read from current line
-                string[] array;
-
-                // Read the next line trimming any whitespace from beginning and end
-                line = file.ReadLine().Trim();
-
-                // Check if separator character is present and throw an exception if it isn't
-                if(line.IndexOf(";")==-1)
+                // Loop until we're at the end of the file
+                while (file.Peek() > 0)
                 {
-                    throw new FormatException("Line number "+rowNumber+" doesn't contain separator character \";\";, aborting");
+                    // Store date and names read from current line
+                    string[] array;
+
+                    // Read the next line trimming any whitespace from beginning and end
+                    line = file.ReadLine().Trim();
+
+                    // Check if separator character is present and throw an exception if it isn't
+                    if (line.IndexOf(";") == -1)
+                    {
+                        throw new FormatException("Line number " + rowNumber + " doesn't contain separator character \";\";, aborting");
+                    }
+
+                    // Separate date and names by splitting by ";"
+                    array = line.Split(';');
+
+                    // Check if date read from file matches the date entered as a parameter
+                    if (array[0].Equals(date))
+                    {
+                        // If dates match, print the names
+                        System.Console.WriteLine(array[1]);
+                    }
+
+                    // Update number of the the current row
+                    rowNumber++;
                 }
 
-                // Separate date and names by splitting by ";"
-                array=line.Split(';');
-
-                // Check if date read from file matches the date entered as a parameter
-                if(array[0].Equals(date))
-                {
-                    // If dates match, print the names
-                    System.Console.WriteLine(array[1]);
-                }
-
-                // Update number of the the current row
-                rowNumber++;
+            }
+            // Catch and throw any exceptions
+            catch (Exception e)
+            {
+                throw e;
             }
 
         }
